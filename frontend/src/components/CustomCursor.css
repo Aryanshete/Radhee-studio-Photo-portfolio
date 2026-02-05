@@ -1,0 +1,30 @@
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #e1c06f;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s ease-out, width 0.1s ease, height 0.1s ease,
+  background 0.1s ease, border-color 0.1s ease;
+  mix-blend-mode: multiply;
+  backdrop-filter: blur(2px);
+}
+
+.custom-cursor.cursor-click {
+  width: 16px;
+  height: 16px;
+  background: rgba(225, 192, 111, 0.35);
+  border-color: #c9a227;
+}
+
+@media (max-width: 768px) {
+  .custom-cursor {
+    display: none;
+  }
+}

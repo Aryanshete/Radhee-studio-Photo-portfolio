@@ -1,0 +1,141 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.nav-inner {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 10px 2.5%;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 50px;          
+  width: auto;
+  object-fit: contain;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-left: auto;
+}
+
+.nav-links li {
+  font-size: 0.88rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4f4630;
+  cursor: pointer;
+  position: relative;
+  padding-bottom: 3px;
+}
+
+.nav-links li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(135deg, #c9a227, #e1c06f);
+  transition: width 0.2s ease;
+}
+
+.nav-links li:hover::after {
+  width: 100%;
+}
+
+.nav-auth-btn {
+  margin-left: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-auth-btn::after {
+  display: none;
+}
+
+.nav-auth-btn button {
+  background: #ff6f6f;
+  padding: 8px 22px;
+  border-radius: 28px;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.nav-auth-btn button:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+.menu-icon {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.menu-icon span {
+  width: 22px;
+  height: 2px;
+  background: #333;
+  border-radius: 2px;
+}
+
+@media (max-width: 900px) {
+  .menu-icon {
+    display: flex;
+    margin-left: auto;
+  }
+
+  .nav-inner {
+    justify-content: space-between;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: rgba(247, 243, 234, 0.98);
+    padding: 22px 7% 30px;
+    gap: 16px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease, opacity 0.25s ease;
+    padding-bottom: 40px;
+  }
+
+  .nav-links.open {
+    max-height: 520px;
+    opacity: 1;
+  }
+
+  .nav-auth-btn {
+    margin: 12px 0 0;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,133 @@
+.auth-wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top, #fffaf0, #f6efe3);
+}
+
+.auth-card {
+  width: 360px;
+  padding: 34px 30px;
+  border-radius: 22px;
+  background: white;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.auth-switch {
+  display: flex;
+  width: 240px;             
+  margin: 0 auto 24px;
+  position: relative;
+}
+
+.auth-switch span {
+  flex: 1;                   
+  text-align: center;
+  cursor: pointer;
+  color: #999;
+  padding-bottom: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  position: relative;
+}
+
+.auth-switch .active {
+  color: #111;
+  font-weight: 600;
+}
+
+.auth-switch .active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 30%;
+  width: 40%;
+  height: 2px;
+  background: #d4a048;
+  border-radius: 10px;
+}
+
+
+.auth-card h2 {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.sub {
+  color: #777;
+  margin-bottom: 22px;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  background: #f4f7fb;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: #d4a048;
+  background: white;
+}
+.login-page .auth-btn {
+  padding: 12px;
+  font-size: 15.5px;
+  border-radius: 12px;
+}
+
+.signup-page .auth-btn {
+  padding: 15px;
+  font-size: 17px;
+  border-radius: 14px;
+}
+
+.auth-btn {
+  width: 100%;
+  margin-top: 18px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #d4a048, #b88028);
+}
+.error-box {
+  background: #ffeded;
+  padding: 10px;
+  border-radius: 10px;
+  color: #c00;
+  margin-bottom: 12px;
+}
+
+.success-toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #1e1e1e;
+  color: white;
+  padding: 14px 22px;
+  border-radius: 14px;
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    width: 90%;
+  }
+}

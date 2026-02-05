@@ -1,0 +1,247 @@
+/* MAIN LAYOUT */
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  background: #f7f0e6;
+}
+
+/* SIDEBAR */
+.admin-sidebar {
+  width: 240px;
+  background: #f1e7d8;
+  padding: 30px;
+  border-right: 2px solid rgba(0,0,0,0.05);
+}
+
+.admin-sidebar h2 {
+  font-size: 22px;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.admin-sidebar button {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0;
+  border-radius: 20px;
+  border: none;
+  background: #e4d5c3;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.admin-sidebar button.active {
+  background: #d4a046;
+  color: #fff;
+  font-weight: 700;
+}
+
+.logout-btn {
+  margin-top: 50px !important;
+  background: #ff6b6b !important;
+  color: #fff;
+}
+
+/* MAIN PANEL */
+.admin-main {
+  flex: 1;
+  padding: 30px 50px;
+  overflow-y: auto;
+}
+
+.section-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+/* BOOKING LIST */
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.booking-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.booking-name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.booking-service {
+  color: #d4a046;
+}
+
+.booking-meta {
+  font-size: 14px;
+  color: #555;
+}
+
+.booking-message {
+  font-style: italic;
+  color: #444;
+  margin-top: 5px;
+}
+
+.delete-btn {
+  padding: 8px 12px;
+  background: #ff6b6b;
+  border-radius: 10px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* GALLERY */
+.gallery-container {
+  display: flex;
+  gap: 25px;
+}
+
+.gallery-category-box {
+  width: 200px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  height: fit-content;
+}
+
+.cat-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 12px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+}
+
+.cat-btn.active {
+  background: #d4a046;
+  color: #fff;
+}
+
+/* GALLERY RIGHT SIDE */
+.gallery-right {
+  flex: 1;
+}
+
+/* UPLOAD BOX */
+.upload-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.dropzone {
+  background: #faf6ef;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  border: 2px dashed #d4a046;
+  color: #777;
+  margin-bottom: 15px;
+}
+
+/* PREVIEW SECTION */
+.preview-grid {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.preview-card {
+  width: 120px;
+}
+
+.preview-card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.crop-btn {
+  margin-top: 5px;
+  width: 100%;
+  padding: 6px;
+  background: #d4a046;
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+}
+
+/* PROGRESS */
+.progress {
+  height: 8px;
+  background: #eee;
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #d4a046;
+  border-radius: 10px;
+}
+
+/* UPLOAD BUTTON */
+.upload-btn {
+  background: #d4a046;
+  color: #fff;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+/* GALLERY GRID */
+.gallery-grid {
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.gallery-item {
+  background: #fff;
+  padding: 10px;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.gallery-item img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.gallery-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+/* FIX BUTTON NOT CLICKING */
+.gallery-item {
+  position: relative;
+}
+
+.gallery-item img {
+  pointer-events: none !important; /* prevents the image from blocking clicks */
+}
+
+.gallery-info {
+  position: relative;
+  z-index: 10 !important;
+  pointer-events: auto !important;
+}
