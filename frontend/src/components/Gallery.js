@@ -23,11 +23,11 @@ export default function Gallery() {
   const loadGallery = () => {
     setFade("fade-out");
 
-    const base = process.env.REACT_APP_API;
+    const base = process.env.REACT_APP_BACKEND_URL;
    const url =
   category === "all"
-    ? `${base}/api/gallery`
-    : `${base}/api/gallery?category=${encodeURIComponent(category)}`;
+    ? `${base}/gallery`
+    : `${base}/gallery?category=${encodeURIComponent(category)}`;
 
 
     fetch(url)
