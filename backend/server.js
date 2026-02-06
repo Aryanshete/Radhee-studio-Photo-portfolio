@@ -4,8 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -13,20 +11,22 @@ const User = require("./models/User");
 const Booking = require("./models/Booking");
 const GalleryImage = require("./models/GalleryImage");
 const auth = require("./middleware/auth");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("./config/cloudinary");
+
 
 const app = express();
 
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://radhee-studio-project.vercel.app"
+    process.env.FRONTEND_URL
   ],
   credentials: true
 }));
 app.use(express.json());
 
-// serve uploaded images
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 /* ===========================================================
                       MONGO SETUP
@@ -40,21 +40,19 @@ mongoose
     process.exit(1);
   });
 
-/* ===========================================================
-                   MULTER STORAGE
-=========================================================== */
+  //cloudinary storage
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "uploads"));
-  },
-  filename: function (req, file, cb) {
-    const cleaned = file.originalname.replace(/\s+/g, "_");
-    cb(null, Date.now() + "-" + cleaned);
+  const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "radhee-gallery",
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
   },
 });
 
 const upload = multer({ storage });
+
+
 
 /* ===========================================================
                       AUTH ROUTES
@@ -178,12 +176,12 @@ app.post(
       }
 
       const category = req.body.category || "general";
-      const baseURL = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 8000}`;
+      
       const saved = [];
 
       for (const file of req.files) {
         const img = new GalleryImage({
-          imageUrl: `${baseURL}/uploads/${file.filename}`,
+          imageUrl: file.path,
           category,
         });
         await img.save();
@@ -204,14 +202,10 @@ app.get("/api/gallery", async (req, res) => {
     const query = category ? { category } : {};
     const images = await GalleryImage.find(query).sort({ uploadedAt: -1 });
     
-    // Normalize URLs to ensure absolute URLs
-    const baseURL = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 8000}`;
-    const normalizedImages = images.map(img => ({
-      ...img.toObject(),
-      imageUrl: img.imageUrl.startsWith('http') ? img.imageUrl : `${baseURL}${img.imageUrl}`
-    }));
     
-    res.json(normalizedImages);
+    
+    
+    res.json(images);
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Server error" });
@@ -223,18 +217,7 @@ app.delete("/api/gallery/:id", auth("admin"), async (req, res) => {
     const img = await GalleryImage.findById(req.params.id);
     if (!img) return res.status(404).json({ msg: "Image not found" });
 
-    // Extract filename from either relative or absolute URL
-    const filename = img.imageUrl.includes('/uploads/') 
-      ? img.imageUrl.split('/uploads/')[1] 
-      : img.imageUrl.split('/').pop();
-    
-    const filePath = path.join(__dirname, "uploads", filename);
-
     await GalleryImage.findByIdAndDelete(req.params.id);
-
-    fs.unlink(filePath, (err) => {
-      if (err) console.warn("File not found:", filePath);
-    });
 
     res.json({ msg: "Image deleted" });
   } catch (err) {
@@ -242,6 +225,7 @@ app.delete("/api/gallery/:id", auth("admin"), async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
+
 
 /* ===========================================================
                         START SERVER
