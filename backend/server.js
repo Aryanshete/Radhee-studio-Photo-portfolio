@@ -18,11 +18,13 @@ const cloudinary = require("./config/cloudinary");
 const app = express();
 
 app.use(cors({
-  origin: true,
+  origin: [
+    "http://localhost:3000",
+    "https://radhee-studio-photo-portfolio.vercel.app"
+  ],
   credentials: true
 }));
 
-app.use(express.json());
 
 
 
