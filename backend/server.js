@@ -18,15 +18,10 @@ const cloudinary = require("./config/cloudinary");
 const app = express();
 
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://radhee-studio-photo-portfolio.vercel.app",
-    "https://radhee-studio-photo-portfolio-bnyiyx6h3.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  origin: true,
   credentials: true
 }));
+
 app.use(express.json());
 
 
@@ -167,6 +162,25 @@ app.delete("/api/bookings/:id", auth("admin"), async (req, res) => {
 /* ===========================================================
                     GALLERY ROUTES
 =========================================================== */
+
+app.get("/api/gallery", async (req, res) => {
+  try {
+    const { category } = req.query;
+
+    const filter =
+      !category || category === "all"
+        ? {}
+        : { category };
+
+    const images = await GalleryImage.find(filter).sort({ createdAt: -1 });
+
+    res.json(images);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Failed to load gallery" });
+  }
+});
+
 
 app.post(
   "/api/gallery",
