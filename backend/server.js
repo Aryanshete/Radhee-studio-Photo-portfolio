@@ -17,13 +17,23 @@ const cloudinary = require("./config/cloudinary");
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://radhee-studio-photo-portfolio.vercel.app",
+  "https://radhee-studio-photo-portfolio-mqafhsx7f.vercel.app"
+];
+
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://radhee-studio-photo-portfolio.vercel.app"
-  ],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS blocked"));
+    }
+  },
   credentials: true
 }));
+
 
 
 
