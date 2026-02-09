@@ -22,9 +22,15 @@ export default function LoginPage() {
 
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/auth/login`,
-        form
-      );
+  `${process.env.REACT_APP_BACKEND_URL}/auth/login`,
+  form,
+  {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }
+);
+
 
       sessionStorage.setItem("token", res.data.token);
       sessionStorage.setItem("role", res.data.role);

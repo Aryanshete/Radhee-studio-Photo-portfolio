@@ -16,6 +16,7 @@ const cloudinary = require("./config/cloudinary");
 
 
 const app = express();
+app.use(express.json());
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -61,6 +62,10 @@ const upload = multer({ storage });
 =========================================================== */
 
 app.post("/api/auth/register", async (req, res) => {
+  if (!req.body) {
+  return res.status(400).json({ msg: "No request body received" });
+}
+
   try {
     const { name, email, password, role } = req.body;
 
@@ -85,6 +90,10 @@ app.post("/api/auth/register", async (req, res) => {
 });
 
 app.post("/api/auth/login", async (req, res) => {
+  if (!req.body) {
+  return res.status(400).json({ msg: "No request body received" });
+}
+
   try {
     const { email, password } = req.body;
 

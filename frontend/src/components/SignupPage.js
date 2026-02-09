@@ -29,14 +29,20 @@ export default function SignupPage() {
     }
 
     try {
-        await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/auth/register`,
-        {
-            name: form.email.split("@")[0],   
-            email: form.email,
-            password: form.password
-        }
-        );
+          await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}/auth/register`,
+            {
+              name: form.email.split("@")[0],
+              email: form.email,
+              password: form.password
+            },
+            {
+              headers: {
+                "Content-Type": "application/json"
+              }
+            }
+          );
+
 
       setSuccess(true);
 
