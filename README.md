@@ -257,10 +257,5 @@ Not allowed for redistribution without permission.
 
 ---
 
-# ❤️ **Credits**
 
-Developed by **Sahil S.**
-With assistance from AI-powered development workflows.
-
----
 
