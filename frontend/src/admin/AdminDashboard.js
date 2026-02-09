@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminDashboard.css";
 import { useNavigate } from "react-router-dom";
+import imageCompression from "browser-image-compression";
+
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -143,22 +145,34 @@ export default function AdminDashboard() {
       return alert("Please select images and a category");
 
     const fd = new FormData();
-    selectedFiles.forEach((file) => fd.append("images", file));
+    for (const file of selectedFiles) {
+  const processed = await smartCompress(file);
+  fd.append("images", processed);
+}
+
     fd.append("category", category);
 
     try {
       setUploadProgress(0);
 
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/gallery`, fd, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "x-auth-token": token,
-        },
-        onUploadProgress: (e) => {
-          if (!e.total) return;
-          setUploadProgress(Math.round((e.loaded * 100) / e.total));
-        },
-      });
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/gallery`,
+        fd,
+        {
+          headers: {
+            "x-auth-token": token,
+          },
+          timeout: 120000,
+          onUploadProgress: (e) => {
+            if (!e.total) return;
+
+            setUploadProgress(
+              Math.round((e.loaded * 100) / e.total)
+            );
+          },
+        }
+      );
+
 
       setSelectedFiles([]);
       setPreviews([]);
@@ -171,6 +185,41 @@ export default function AdminDashboard() {
       alert("Upload failed");
     }
   };
+
+  const smartCompress = async (file) => {
+  const LIMIT_MB = 9.5;
+  const LIMIT_BYTES = LIMIT_MB * 1024 * 1024;
+
+  if (file.size <= LIMIT_BYTES) return file;
+
+  console.log("⚡ Starting compression:", file.name);
+
+  let quality = 0.98; // start very high
+  let compressed = file;
+
+  while (compressed.size > LIMIT_BYTES && quality > 0.85)
+ {
+    compressed = await imageCompression(compressed, {
+      maxWidthOrHeight: 4096,
+      useWebWorker: true,
+      initialQuality: quality,
+    });
+
+    console.log(
+      `→ quality ${quality.toFixed(2)} | size ${(compressed.size / 1024 / 1024).toFixed(2)} MB`
+    );
+
+    quality -= 0.05; // reduce gradually
+  }
+
+  console.log(
+    `✅ Final size ${(compressed.size / 1024 / 1024).toFixed(2)} MB`
+  );
+
+  return compressed;
+};
+
+
 
   const logout = () => {
     sessionStorage.removeItem("token");

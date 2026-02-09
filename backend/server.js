@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
 const User = require("./models/User");
 const Booking = require("./models/Booking");
 const GalleryImage = require("./models/GalleryImage");
@@ -15,8 +14,11 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("./config/cloudinary");
 
 
+
 const app = express();
 app.use(express.json());
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ limit: "20mb", extended: true }));
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -49,11 +51,22 @@ mongoose
   cloudinary,
   params: {
     folder: "radhee-gallery",
-    allowed_formats: ["jpg", "png", "jpeg", "webp"],
+    allowed_formats: ["jpg",
+  "jpeg",
+  "png",
+  "webp",
+  "JPG",
+  "JPEG"],
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 15 * 1024 * 1024,
+  },
+});
+
 
 
 
@@ -176,6 +189,7 @@ app.delete("/api/bookings/:id", auth("admin"), async (req, res) => {
                     GALLERY ROUTES
 =========================================================== */
 
+// GET gallery (with optional category filter)
 app.get("/api/gallery", async (req, res) => {
   try {
     const { category } = req.query;
@@ -185,28 +199,44 @@ app.get("/api/gallery", async (req, res) => {
         ? {}
         : { category };
 
-    const images = await GalleryImage.find(filter).sort({ createdAt: -1 });
+    const images = await GalleryImage
+      .find(filter)
+      .sort({ createdAt: -1 });
 
     res.json(images);
+
   } catch (err) {
-    console.error(err);
+    console.error("Gallery load error:", err);
     res.status(500).json({ msg: "Failed to load gallery" });
   }
 });
 
 
+// UPLOAD images
 app.post(
   "/api/gallery",
   auth("admin"),
-  upload.array("images", 20),
+  (req, res, next) => {
+    upload.array("images", 20)(req, res, function (err) {
+      if (err) {
+        console.error("🔥 Multer/Cloudinary error:", err);
+        return res.status(500).json({
+          msg: "Upload middleware failed",
+          error: err.message,
+        });
+      }
+      next();
+    });
+  },
   async (req, res) => {
     try {
+      console.log("📦 Files received:", req.files?.length);
+
       if (!req.files || req.files.length === 0) {
         return res.status(400).json({ msg: "No images uploaded" });
       }
 
       const category = req.body.category || "general";
-      
       const saved = [];
 
       for (const file of req.files) {
@@ -214,47 +244,47 @@ app.post(
           imageUrl: file.path,
           category,
         });
+
         await img.save();
         saved.push(img);
       }
 
-      res.json({ msg: "Images uploaded", images: saved });
+      res.json({
+        msg: "Images uploaded",
+        images: saved,
+      });
+
     } catch (err) {
-      console.error("Upload error:", err);
-      res.status(500).json({ msg: "Upload failed" });
+      console.error("🔥 Upload route crash:", err);
+      res.status(500).json({
+        msg: "Upload failed",
+        error: err.message,
+      });
     }
   }
 );
 
-app.get("/api/gallery", async (req, res) => {
-  try {
-    const { category } = req.query;
-    const query = category ? { category } : {};
-    const images = await GalleryImage.find(query).sort({ uploadedAt: -1 });
-    
-    
-    
-    
-    res.json(images);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: "Server error" });
-  }
-});
 
+
+// DELETE image
 app.delete("/api/gallery/:id", auth("admin"), async (req, res) => {
   try {
     const img = await GalleryImage.findById(req.params.id);
-    if (!img) return res.status(404).json({ msg: "Image not found" });
+
+    if (!img) {
+      return res.status(404).json({ msg: "Image not found" });
+    }
 
     await GalleryImage.findByIdAndDelete(req.params.id);
 
     res.json({ msg: "Image deleted" });
+
   } catch (err) {
-    console.error(err);
+    console.error("Delete error:", err);
     res.status(500).json({ msg: "Server error" });
   }
 });
+
 
 
 /* ===========================================================
