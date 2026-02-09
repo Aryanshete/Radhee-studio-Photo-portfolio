@@ -32,8 +32,9 @@ export default function Navbar() {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role");
+
     setIsLoggedIn(false);
     setOpen(false);
     navigate("/login");
@@ -71,7 +72,15 @@ export default function Navbar() {
             {isLoggedIn ? (
               <button onClick={logout}>Logout</button>
             ) : (
-              <button onClick={() => navigate("/login")}>Login</button>
+              <button
+              onClick={() => {
+                setOpen(false);
+                navigate("/login");
+              }}
+            >
+              Login
+            </button>
+
             )}
           </li>
         </ul>
