@@ -35,7 +35,7 @@ export default function Owner() {
 
           <div className="owner-contact">
             <p>Email: <span>radheestudio@gmail.com</span></p>
-            {/* <p>Phone: <span>+91-XXXXXXXXXX</span></p> */}
+            <p>Phone: <span>+917888116010</span></p> 
           </div>
         </div>
       </div>
