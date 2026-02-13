@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-inner">
         <div className="footer-brand">
-          <h3>Radhee Studio</h3>
+          <h3>Radhe Studio</h3>
           <p>Arts & Photoworks – KOLHAPUR</p>
         </div>
 
