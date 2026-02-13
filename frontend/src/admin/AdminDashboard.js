@@ -7,6 +7,82 @@ import imageCompression from "browser-image-compression";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  //services
+  const [services, setServices] = useState([]);
+  const [editingService, setEditingService] = useState(null);
+  const [serviceForm, setServiceForm] = useState({
+    title: "",
+    tag: "",
+    description: "",
+    starting: ""
+  });
+const loadServices = async () => {
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/services`,
+      { headers: authHeaders }
+    );
+
+    setServices(res.data);
+
+  } catch (err) {
+    console.error("Service load error:", err);
+  }
+};
+
+const saveService = async () => {
+  try {
+    if (!serviceForm.title.trim()) {
+      alert("Title required");
+      return;
+    }
+
+    const base = `${process.env.REACT_APP_BACKEND_URL}/services`;
+
+    const url = editingService
+      ? `${base}/${editingService}`
+      : base;
+
+    const method = editingService ? axios.put : axios.post;
+
+    await method(url, serviceForm, {
+      headers: authHeaders,
+    });
+
+    alert("Service saved!");
+
+    setServiceForm({
+      title: "",
+      tag: "",
+      description: "",
+      starting: "",
+    });
+
+    setEditingService(null);
+
+    loadServices();
+
+  } catch (err) {
+    console.error("Save failed:", err.response?.data || err);
+    alert("Service save failed");
+  }
+};
+
+
+const deleteService = async (id) => {
+  if (!window.confirm("Delete this service?")) return;
+
+  await axios.delete(
+    `${process.env.REACT_APP_BACKEND_URL}/services/${id}`,
+    { headers: authHeaders }
+  );
+
+  loadServices();
+};
+
+
+  
+
 
   const [bookings, setBookings] = useState([]);
   const [gallery, setGallery] = useState([]);
@@ -56,6 +132,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     loadBookings();
     loadGallery();
+    loadServices();
   }, []);
 
   useEffect(() => {
@@ -221,6 +298,8 @@ export default function AdminDashboard() {
 
 
 
+
+
   const logout = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("role");
@@ -258,6 +337,13 @@ export default function AdminDashboard() {
         >
           Gallery
         </button>
+        <button
+        className={activeTab === "services" ? "active" : ""}
+        onClick={() => setActiveTab("services")}
+      >
+        Services
+      </button>
+
 
         <button className="logout-btn" onClick={logout}>
           Logout
@@ -407,6 +493,92 @@ export default function AdminDashboard() {
             </div>
           </section>
         )}
+        {/* ------------------ SERVICES TAB ------------------ */}
+{activeTab === "services" && (
+  <section>
+    <h2 className="section-title">Services Manager</h2>
+
+    {/* FORM */}
+    <div className="upload-box">
+    <h3>Add / Edit Service</h3>
+
+      <input
+        placeholder="Title"
+        value={serviceForm.title}
+        onChange={(e) =>
+          setServiceForm({ ...serviceForm, title: e.target.value })
+        }
+      />
+
+      <input
+        placeholder="Tag"
+        value={serviceForm.tag}
+        onChange={(e) =>
+          setServiceForm({ ...serviceForm, tag: e.target.value })
+        }
+      />
+
+      <textarea
+        placeholder="Description"
+        value={serviceForm.description}
+        onChange={(e) =>
+          setServiceForm({
+            ...serviceForm,
+            description: e.target.value,
+          })
+        }
+      />
+
+      <input
+        placeholder="Starting Price"
+        value={serviceForm.starting}
+        onChange={(e) =>
+          setServiceForm({
+            ...serviceForm,
+            starting: e.target.value,
+          })
+        }
+      />
+
+      <button className="upload-btn" onClick={saveService}>
+        {editingService ? "Update Service" : "Add Service"}
+      </button>
+    </div>
+
+    {/* LIST */}
+    <div className="services-grid">
+      {services.map((s) => (
+        <article key={s._id} className="service-card">
+          <div className="service-tag">{s.tag}</div>
+
+          <h3>{s.title}</h3>
+          <p className="service-text">{s.description}</p>
+
+          <p className="service-price">
+            Starting at <span>{s.starting}</span>
+          </p>
+
+          <button
+            className="book-now-btn"
+            onClick={() => {
+              setEditingService(s._id);
+              setServiceForm(s);
+            }}
+          >
+            Edit
+          </button>
+
+          <button
+            className="delete-btn"
+            onClick={() => deleteService(s._id)}
+          >
+            Delete
+          </button>
+        </article>
+      ))}
+    </div>
+  </section>
+)}
       </main>
     </div>
   );

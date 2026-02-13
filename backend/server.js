@@ -33,6 +33,8 @@ app.use(cors({
 
 
 
+
+
 /* ===========================================================
                       MONGO SETUP
 =========================================================== */
@@ -277,6 +279,7 @@ app.delete("/api/gallery/:id", auth("admin"), async (req, res) => {
 
     await GalleryImage.findByIdAndDelete(req.params.id);
 
+
     res.json({ msg: "Image deleted" });
 
   } catch (err) {
@@ -285,6 +288,72 @@ app.delete("/api/gallery/:id", auth("admin"), async (req, res) => {
   }
 });
 
+/* ===========================================================
+                   SERVICES MODEL
+=========================================================== */
+
+const ServiceSchema = new mongoose.Schema({
+  title: String,
+  tag: String,
+  description: String,
+  starting: String,
+}, { timestamps: true });
+
+const Service = mongoose.model("Service", ServiceSchema);
+
+
+/* ===========================================================
+                   SERVICES ROUTES
+=========================================================== */
+
+// GET
+app.get("/api/services", async (req, res) => {
+  try {
+    const services = await Service.find().sort({ createdAt: -1 });
+    res.json(services);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Fetch failed" });
+  }
+});
+
+// CREATE
+app.post("/api/services", auth("admin"), async (req, res) => {
+  try {
+    const service = new Service(req.body);
+    await service.save();
+    res.json(service);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Create failed" });
+  }
+});
+
+// UPDATE
+app.put("/api/services/:id", auth("admin"), async (req, res) => {
+  try {
+    const updated = await Service.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.json(updated);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Update failed" });
+  }
+});
+
+// DELETE
+app.delete("/api/services/:id", auth("admin"), async (req, res) => {
+  try {
+    await Service.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Delete failed" });
+  }
+});
 
 
 /* ===========================================================

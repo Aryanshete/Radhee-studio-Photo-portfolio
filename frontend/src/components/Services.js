@@ -1,72 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Services.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Services() {
   const navigate = useNavigate();
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const goToBooking = (serviceTitle) => {
     const token = sessionStorage.getItem("token");
 
     if (!token) {
-      
-      navigate("/login", { state: { from: "/book", serviceName: serviceTitle } });
+      navigate("/login", {
+        state: { from: "/book", serviceName: serviceTitle },
+      });
       return;
     }
 
     navigate("/book", { state: { serviceName: serviceTitle } });
   };
 
-  const services = [
-    {
-      id: "wedding",
-      title: "Wedding Stories",
-      tag: "Full-day coverage",
-      description:
-        "From haldi to pheras and reception, we capture every ritual, laugh and tear with a blend of candid and classic frames.",
-      starting: "₹45,000",
-    },
-    {
-      id: "prewedding",
-      title: "Pre-Wedding",
-      tag: "Cinematic sessions",
-      description:
-        "Stylised couple sessions with location planning, posing guidance and creative concepts tailored to your story.",
-      starting: "₹18,000",
-    },
-    {
-      id: "portraits",
-      title: "Portraits",
-      tag: "Individual & couple",
-      description:
-        "Editorial-style portraits for artists, entrepreneurs and families who want timeless images with a clean aesthetic.",
-      starting: "₹6,000",
-    },
-    {
-      id: "family",
-      title: "Family Sessions",
-      tag: "At home or studio",
-      description:
-        "Warm, relaxed sessions that focus on genuine connections between parents, kids and extended families.",
-      starting: "₹9,000",
-    },
-    {
-      id: "corporate",
-      title: "Corporate",
-      tag: "Headshots & events",
-      description:
-        "Professional headshots, office lifestyle imagery and coverage for launches, conferences and internal events.",
-      starting: "On request",
-    },
-    {
-      id: "commercial",
-      title: "Commercial & Branding",
-      tag: "Brands & products",
-      description:
-        "Clean, impactful visuals for social media campaigns, catalogues and brand stories that stand out.",
-      starting: "On request",
-    },
-  ];
+  useEffect(() => {
+    const loadServices = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/services`
+        );
+
+        setServices(res.data || []);
+      } catch (err) {
+        console.error("Service fetch failed:", err);
+
+        // fallback so UI never crashes
+        setServices([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadServices();
+  }, []);
+
+  if (loading) return <p style={{ textAlign: "center" }}>Loading services…</p>;
 
   return (
     <section id="services" className="services-section">
@@ -76,8 +52,10 @@ export default function Services() {
       </p>
 
       <div className="services-grid">
+        {services.length === 0 && <p>No services available.</p>}
+
         {services.map((s) => (
-          <article key={s.id} id={s.id} className="service-card">
+          <article key={s._id} id={s._id} className="service-card">
             <div className="service-tag">{s.tag}</div>
 
             <h3>{s.title}</h3>
