@@ -7,6 +7,7 @@ export default function BookingForm() {
   const location = useLocation();
 
   const selectedService = location.state?.serviceName || "";
+  const [services, setServices] = useState([]);
 
   const [form, setForm] = useState({
     name: "",
@@ -18,10 +19,21 @@ export default function BookingForm() {
   });
 
   useEffect(() => {
-    if (selectedService) {
-      setForm((prev) => ({ ...prev, serviceType: selectedService }));
+  const loadServices = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/services`
+      );
+
+      setServices(res.data);
+    } catch (err) {
+      console.error("Service fetch failed:", err);
     }
-  }, [selectedService]);
+  };
+
+  loadServices();
+}, []);
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -91,15 +103,14 @@ export default function BookingForm() {
             required
           >
             <option value="">Select a service</option>
-            <option value="Wedding Stories">Wedding Stories</option>
-            <option value="Pre-Wedding">Pre-Wedding</option>
-            <option value="Portraits">Portraits</option>
-            <option value="Family Sessions">Family Sessions</option>
-            <option value="Corporate">Corporate</option>
-            <option value="Commercial & Branding">
-              Commercial & Branding
-            </option>
+
+            {services.map((s) => (
+              <option key={s._id} value={s.title}>
+                {s.title}
+              </option>
+            ))}
           </select>
+
 
           <label>Message (Optional)</label>
           <textarea
