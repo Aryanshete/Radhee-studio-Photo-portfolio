@@ -7,12 +7,12 @@ export default function Footer() {
       <div className="footer-inner">
         <div className="footer-brand">
           <h3>Radhee Studio</h3>
-          <p>Arts & Photoworks – Pune</p>
+          <p>Arts & Photoworks – KOLHAPUR</p>
         </div>
 
         <div className="footer-contact">
-          {/* <p>Call: +91-XXXXXXXXXX</p> */}
-          <p>Email: radheestudio@gmail.com</p>
+           {/* <p>Call: 8830083756</p> */}
+          <p>Email: radhe.arts0201@gmail.com</p>
         </div>
 
         <div className="footer-copy">
@@ -23,3 +23,4 @@ export default function Footer() {
     </footer>
   );
 }
+    
